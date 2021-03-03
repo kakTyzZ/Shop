@@ -8,7 +8,7 @@ import Message from '../components/Message'
 import { listProductDetails } from '../actions/productActions'
 
 
-function ProductScreen( {match} ) {
+function ProductScreen( {match, history} ) {
     const [qty, setQty] = useState(1)
 
 
@@ -20,7 +20,9 @@ function ProductScreen( {match} ) {
         dispatch(listProductDetails(match.params.id))
     }, [dispatch, match])
 
-    
+    const addToCartHandler = () => {
+        history.push(`/cart/${match.params.id}?qty=${qty}`)
+    }
 
     return (
         <div>
@@ -82,7 +84,11 @@ function ProductScreen( {match} ) {
                                                      onChange={(e) => setQty(e.target.value)}
                                                     >
                                                         {
-                                                            [...Array(product.countInStock).keys()]
+                                                            [...Array(product.countInStock).keys().map((x) => (
+                                                                <option key={x+1} value={x+1}>
+                                                                    {x + 1}
+                                                                </option>
+                                                            ))]
                                                         }
                                                     </Form.Control>
                                                 </Col>
@@ -91,7 +97,13 @@ function ProductScreen( {match} ) {
                                     )}
 
                                     <ListGroup.Item>
-                                        <Button className='btn-block' disabled={product.countInStock == 0} type='button'>Add to Cart</Button>
+                                        <Button 
+                                        onClick={addToCartHandler}
+                                        className='btn-block' 
+                                        disabled={product.countInStock == 0} 
+                                        type='button'
+                                        >Add to Cart
+                                        </Button>
                                     </ListGroup.Item>
                                     
                                 </ListGroup>
